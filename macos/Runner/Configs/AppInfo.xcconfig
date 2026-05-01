@@ -8,7 +8,7 @@
 PRODUCT_NAME = premium_webview_app
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.antigravity.webview.premiumWebviewApp
+PRODUCT_BUNDLE_IDENTIFIER = com.luxeenet.webview.premiumWebviewApp
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.antigravity.webview. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.luxeenet.webview. All rights reserved.

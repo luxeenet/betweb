@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.antigravity.webview" "\0"
+            VALUE "CompanyName", "com.luxeenet.webview" "\0"
             VALUE "FileDescription", "premium_webview_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "premium_webview_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.antigravity.webview. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.luxeenet.webview. All rights reserved." "\0"
             VALUE "OriginalFilename", "premium_webview_app.exe" "\0"
             VALUE "ProductName", "premium_webview_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
