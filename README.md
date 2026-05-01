@@ -60,4 +60,4 @@ BetMakini is designed to comply with:
 - **Privacy Guidelines**: Includes all necessary `NSUsageDescription` keys.
 
 ---
-Built with ❤️ by Antigravity AI
+Built with ❤️ by luxeenet
