@@ -59,5 +59,3 @@ BetMakini is designed to comply with:
 - **Guideline 5.3 (Gambling)**: Structure ready for geo-restriction and licensing requirements.
 - **Privacy Guidelines**: Includes all necessary `NSUsageDescription` keys.
 
----
-Made with ❤️ by luxeenet
