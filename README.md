@@ -35,7 +35,7 @@ BetMakini is a high-performance, App Store-compliant Flutter application built w
 3. **Configure URL**
    Open `lib/core/constants/app_config.dart` and update the `baseUrl`:
    ```dart
-   static const String baseUrl = "https://your-website.com";
+   static const String baseUrl = "https://betmakini.com";
    ```
 
 4. **Run the app**
