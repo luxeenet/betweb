@@ -1,4 +1,4 @@
-package com.betmakini.www
+package com.betmakini.app
 
 import io.flutter.embedding.android.FlutterActivity
 
