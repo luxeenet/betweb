@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:ui';
 import '../controller/main_controller.dart';
+import '../../notifications/view/notifications_screen.dart';
+import '../../settings/view/settings_screen.dart';
 import '../../webview/view/webview_screen.dart';
 
 class MainScreen extends StatelessWidget {
@@ -11,8 +13,8 @@ class MainScreen extends StatelessWidget {
 
   final List<Widget> pages = [
     WebViewScreen(),
-    const Center(child: Text("Notifications")),
-    const Center(child: Text("Settings")),
+    const NotificationsScreen(),
+    const SettingsScreen(),
   ];
 
   @override

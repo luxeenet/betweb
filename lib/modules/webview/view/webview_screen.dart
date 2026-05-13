@@ -33,6 +33,15 @@ class WebViewScreen extends StatelessWidget {
               onWebViewCreated: (webController) {
                 controller.webViewController = webController;
               },
+              onLoadStart: (webController, url) {
+                controller.onLoadStart();
+              },
+              onLoadStop: (webController, url) {
+                controller.onLoadStop();
+              },
+              onReceivedError: (webController, request, error) {
+                controller.onReceivedError();
+              },
               onProgressChanged: (webController, progress) {
                 controller.onProgressChanged(progress);
               },
@@ -48,27 +57,43 @@ class WebViewScreen extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
-        child: Column(
-          children: [
-            Container(height: 2, color: Colors.blue), 
-            Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Container(
-                    height: 100, 
-                    decoration: BoxDecoration(
-                      color: Colors.white, 
-                      borderRadius: BorderRadius.circular(12)
-                    )
+        baseColor: Colors.grey[200]!,
+        highlightColor: Colors.white,
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 60),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  width: 180,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 30),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 6,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Container(
+                    height: 110,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
