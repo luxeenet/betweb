@@ -38,6 +38,8 @@ class WebViewScreen extends StatelessWidget {
               ),
               onWebViewCreated: (webController) {
                 controller.webViewController = webController;
+                // Explicitly ensure the URL is loaded upon creation to avoid silent failures
+                webController.loadUrl(urlRequest: URLRequest(url: WebUri(AppConfig.baseUrl)));
               },
               onLoadStart: (webController, url) {
                 controller.onLoadStart();

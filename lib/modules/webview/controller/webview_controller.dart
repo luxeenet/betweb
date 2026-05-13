@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../../../core/constants/app_config.dart';
 
 class CustomWebViewController extends GetxController {
   late InAppWebViewController webViewController;
@@ -70,7 +71,8 @@ class CustomWebViewController extends GetxController {
   void reload() {
     progress.value = 0.0; // Reset progress to allow shimmer to show again
     isLoading.value = true;
-    webViewController.reload();
+    // Explicitly load the base URL again to ensure it is found
+    webViewController.loadUrl(urlRequest: URLRequest(url: WebUri(AppConfig.baseUrl)));
   }
 }
 
