@@ -27,8 +27,14 @@ class WebViewScreen extends StatelessWidget {
                 mediaPlaybackRequiresUserGesture: false,
                 allowsInlineMediaPlayback: true,
                 useShouldOverrideUrlLoading: true,
-                isFraudulentWebsiteWarningEnabled: true, 
-                safeBrowsingEnabled: true,
+                isFraudulentWebsiteWarningEnabled: false, 
+                safeBrowsingEnabled: false,
+                supportZoom: false,
+                displayZoomControls: false,
+                builtInZoomControls: false,
+                useWideViewPort: true,
+                loadWithOverviewMode: true,
+                domStorageEnabled: true,
               ),
               onWebViewCreated: (webController) {
                 controller.webViewController = webController;
@@ -40,6 +46,9 @@ class WebViewScreen extends StatelessWidget {
                 controller.onLoadStop();
               },
               onReceivedError: (webController, request, error) {
+                controller.onReceivedError();
+              },
+              onReceivedHttpError: (webController, request, response) {
                 controller.onReceivedError();
               },
               onProgressChanged: (webController, progress) {

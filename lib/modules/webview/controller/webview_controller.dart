@@ -32,14 +32,18 @@ class CustomWebViewController extends GetxController {
 
   void onProgressChanged(int progressValue) {
     progress.value = progressValue / 100;
-    if (progressValue == 100) {
+    // Show content when it's mostly loaded (80%+) to avoid getting stuck on slow scripts
+    if (progressValue >= 80) {
       isLoading.value = false;
       _loadingTimeout?.cancel();
     }
   }
 
   void onLoadStart() {
-    isLoading.value = true;
+    // Only show loading shimmer if we are starting a fresh load
+    if (progress.value < 0.1) {
+      isLoading.value = true;
+    }
     _startLoadingTimeout();
   }
 
@@ -55,7 +59,8 @@ class CustomWebViewController extends GetxController {
 
   void _startLoadingTimeout() {
     _loadingTimeout?.cancel();
-    _loadingTimeout = Timer(const Duration(seconds: 15), () {
+    // Reduced timeout to 2 seconds for ultra-fast response
+    _loadingTimeout = Timer(const Duration(seconds: 2), () {
       if (isLoading.value) {
         isLoading.value = false;
       }
@@ -63,6 +68,7 @@ class CustomWebViewController extends GetxController {
   }
 
   void reload() {
+    progress.value = 0.0; // Reset progress to allow shimmer to show again
     isLoading.value = true;
     webViewController.reload();
   }
