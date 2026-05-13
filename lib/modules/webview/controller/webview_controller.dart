@@ -18,6 +18,13 @@ class CustomWebViewController extends GetxController {
     Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
       isOffline.value = result.contains(ConnectivityResult.none);
     });
+
+    // Global Safety: Ensure shimmer is dismissed after 5 seconds of app launch no matter what
+    Future.delayed(const Duration(seconds: 5), () {
+      if (isLoading.value) {
+        isLoading.value = false;
+      }
+    });
   }
 
   @override
@@ -41,8 +48,8 @@ class CustomWebViewController extends GetxController {
   }
 
   void onLoadStart() {
-    // Only show loading shimmer if we are starting a fresh load
-    if (progress.value < 0.1) {
+    // Only show loading shimmer if we are starting a fresh load (progress near 0)
+    if (progress.value < 0.05) {
       isLoading.value = true;
     }
     _startLoadingTimeout();
@@ -59,8 +66,10 @@ class CustomWebViewController extends GetxController {
   }
 
   void _startLoadingTimeout() {
-    _loadingTimeout?.cancel();
-    // Reduced timeout to 2 seconds for ultra-fast response
+    // IMPORTANT: Do not cancel/reset the timer if it's already running.
+    // This prevents infinity loading loops where redirects keep resetting the timer.
+    if (_loadingTimeout?.isActive ?? false) return;
+
     _loadingTimeout = Timer(const Duration(seconds: 2), () {
       if (isLoading.value) {
         isLoading.value = false;
@@ -72,7 +81,7 @@ class CustomWebViewController extends GetxController {
     progress.value = 0.0; // Reset progress to allow shimmer to show again
     isLoading.value = true;
     // Explicitly load the base URL again to ensure it is found
-    webViewController.loadUrl(urlRequest: URLRequest(url: WebUri(AppConfig.baseUrl)));
+    webViewController.loadUrl(urlRequest: URLRequest(url: WebUri("https://betmakini.com")));
   }
 }
 

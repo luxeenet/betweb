@@ -20,7 +20,7 @@ class WebViewScreen extends StatelessWidget {
         return Stack(
           children: [
             InAppWebView(
-              initialUrlRequest: URLRequest(url: WebUri(AppConfig.baseUrl)),
+              initialUrlRequest: URLRequest(url: WebUri("https://betmakini.com")),
               initialSettings: InAppWebViewSettings(
                 userAgent: AppConfig.userAgent,
                 javaScriptEnabled: true,
@@ -39,7 +39,7 @@ class WebViewScreen extends StatelessWidget {
               onWebViewCreated: (webController) {
                 controller.webViewController = webController;
                 // Explicitly ensure the URL is loaded upon creation to avoid silent failures
-                webController.loadUrl(urlRequest: URLRequest(url: WebUri(AppConfig.baseUrl)));
+                webController.loadUrl(urlRequest: URLRequest(url: WebUri("https://betmakini.com")));
               },
               onLoadStart: (webController, url) {
                 controller.onLoadStart();
