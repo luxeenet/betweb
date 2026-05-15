@@ -11,12 +11,13 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: backgroundColor,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
+        primary: primaryColor,
+        surface: backgroundColor,
         brightness: Brightness.light,
       ),
+      scaffoldBackgroundColor: backgroundColor,
       textTheme: GoogleFonts.outfitTextTheme(),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
@@ -36,12 +37,13 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: darkBackgroundColor,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
+        primary: primaryColor,
+        surface: darkBackgroundColor,
         brightness: Brightness.dark,
       ),
+      scaffoldBackgroundColor: darkBackgroundColor,
       textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.black,

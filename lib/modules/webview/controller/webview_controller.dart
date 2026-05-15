@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,8 @@ import '../../../core/constants/app_config.dart';
 
 class CustomWebViewController extends GetxController {
   late InAppWebViewController webViewController;
+  PullToRefreshController? pullToRefreshController;
+  
   var progress = 0.0.obs;
   var isLoading = true.obs;
   var isOffline = false.obs;
@@ -15,14 +18,33 @@ class CustomWebViewController extends GetxController {
   void onInit() {
     super.onInit();
     checkConnectivity();
+    
+    // Initialize Pull to Refresh for a native feel
+    pullToRefreshController = PullToRefreshController(
+      settings: PullToRefreshSettings(
+        color: Colors.blue,
+      ),
+      onRefresh: () async {
+        if (isOffline.value) {
+          checkConnectivity();
+        }
+        webViewController.reload();
+      },
+    );
+
     Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
       isOffline.value = result.contains(ConnectivityResult.none);
+      if (!isOffline.value && isLoading.value) {
+        reload();
+      }
     });
 
-    // Global Safety: Ensure shimmer is dismissed after 5 seconds of app launch no matter what
-    Future.delayed(const Duration(seconds: 5), () {
+    // Global Safety: Ensure loading state is dismissed after 8 seconds of app launch no matter what
+    // Increased slightly to allow for slow connections, but still prevents infinite loops.
+    Future.delayed(const Duration(seconds: 8), () {
       if (isLoading.value) {
         isLoading.value = false;
+        _loadingTimeout?.cancel();
       }
     });
   }
@@ -40,16 +62,19 @@ class CustomWebViewController extends GetxController {
 
   void onProgressChanged(int progressValue) {
     progress.value = progressValue / 100;
-    // Show content when it's mostly loaded (80%+) to avoid getting stuck on slow scripts
-    if (progressValue >= 80) {
-      isLoading.value = false;
-      _loadingTimeout?.cancel();
+    
+    // Dismiss loading when content is mostly ready (75%+) or fully ready
+    if (progressValue >= 75) {
+      if (isLoading.value) {
+        isLoading.value = false;
+        _loadingTimeout?.cancel();
+      }
     }
   }
 
   void onLoadStart() {
-    // Only show loading shimmer if we are starting a fresh load (progress near 0)
-    if (progress.value < 0.05) {
+    // Only update loading state if we are starting a fresh load
+    if (progress.value < 0.1) {
       isLoading.value = true;
     }
     _startLoadingTimeout();
@@ -57,20 +82,20 @@ class CustomWebViewController extends GetxController {
 
   void onLoadStop() {
     isLoading.value = false;
+    pullToRefreshController?.endRefreshing();
     _loadingTimeout?.cancel();
   }
 
   void onReceivedError() {
     isLoading.value = false;
+    pullToRefreshController?.endRefreshing();
     _loadingTimeout?.cancel();
   }
 
   void _startLoadingTimeout() {
-    // IMPORTANT: Do not cancel/reset the timer if it's already running.
-    // This prevents infinity loading loops where redirects keep resetting the timer.
-    if (_loadingTimeout?.isActive ?? false) return;
-
-    _loadingTimeout = Timer(const Duration(seconds: 2), () {
+    // Standard 5-second timeout for individual page loads
+    _loadingTimeout?.cancel(); 
+    _loadingTimeout = Timer(const Duration(seconds: 5), () {
       if (isLoading.value) {
         isLoading.value = false;
       }
@@ -78,10 +103,9 @@ class CustomWebViewController extends GetxController {
   }
 
   void reload() {
-    progress.value = 0.0; // Reset progress to allow shimmer to show again
+    progress.value = 0.0;
     isLoading.value = true;
-    // Explicitly load the base URL again to ensure it is found
-    webViewController.loadUrl(urlRequest: URLRequest(url: WebUri("https://betmakini.com")));
+    webViewController.reload();
   }
 }
 
