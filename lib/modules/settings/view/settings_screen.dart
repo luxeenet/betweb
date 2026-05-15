@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../../../core/constants/app_config.dart';
+import '../../webview/controller/webview_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -151,9 +152,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 confirmTextColor: Colors.white,
                 onConfirm: () async {
                   Get.back();
-                  // Note: In a real app, you'd access the InAppWebViewController
-                  // For now, we show a success message as a native feature demonstration
-                  await InAppWebViewController.clearAllCache();
+                  // Clear cookies globally using webview_flutter
+                  await WebViewCookieManager().clearCookies();
+                  // Also clear cache if the controller is available
+                  try {
+                    final CustomWebViewController webController = Get.find<CustomWebViewController>();
+                    await webController.webViewController.clearCache();
+                  } catch (e) {
+                    // Controller not initialized yet, that's fine
+                  }
                   Get.snackbar(
                     "Success",
                     "Cache cleared successfully",

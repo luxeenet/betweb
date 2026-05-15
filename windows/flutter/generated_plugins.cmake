@@ -5,7 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   dart_vlc
-  flutter_inappwebview_windows
   local_auth_windows
   share_plus
   url_launcher_windows

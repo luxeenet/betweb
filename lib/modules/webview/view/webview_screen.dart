@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_config.dart';
 import '../controller/webview_controller.dart';
 
 class WebViewScreen extends StatelessWidget {
@@ -12,67 +11,38 @@ class WebViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black, // Match professional theme
       body: Obx(() {
         if (controller.isOffline.value) {
           return _buildOfflineView();
         }
         return Stack(
           children: [
-            InAppWebView(
-              initialUrlRequest: URLRequest(
-                url: WebUri("https://betmakini.com"),
+            RefreshIndicator(
+              onRefresh: () async {
+                controller.reload();
+              },
+              child: WebViewWidget(
+                controller: controller.webViewController,
               ),
-              pullToRefreshController: controller.pullToRefreshController,
-              initialSettings: InAppWebViewSettings(
-                userAgent: AppConfig.userAgent,
-                javaScriptEnabled: true,
-                mediaPlaybackRequiresUserGesture: false,
-                allowsInlineMediaPlayback: true,
-                useShouldOverrideUrlLoading: true,
-                isFraudulentWebsiteWarningEnabled: false,
-                safeBrowsingEnabled: false,
-                supportZoom: false,
-                displayZoomControls: false,
-                builtInZoomControls: false,
-                useWideViewPort: true,
-                loadWithOverviewMode: true,
-                domStorageEnabled: true,
-                databaseEnabled: true,
-                cacheEnabled: true,
-                allowFileAccessFromFileURLs: true,
-                allowUniversalAccessFromFileURLs: true,
-                allowsBackForwardNavigationGestures: true,
-                transparentBackground: true,
-              ),
-              onWebViewCreated: (webController) {
-                controller.webViewController = webController;
-              },
-              onLoadStart: (webController, url) {
-                controller.onLoadStart();
-              },
-              onLoadStop: (webController, url) {
-                controller.onLoadStop();
-              },
-              onReceivedError: (webController, request, error) {
-                controller.onReceivedError();
-                Get.snackbar("Network Error", error.description, 
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: Colors.red.withValues(alpha: 0.7),
-                  colorText: Colors.white);
-              },
-              onReceivedHttpError: (webController, request, response) {
-                controller.onReceivedError();
-                Get.snackbar("Server Error", "HTTP ${response.statusCode}", 
-                  snackPosition: SnackPosition.BOTTOM);
-              },
-              onProgressChanged: (webController, progress) {
-                controller.onProgressChanged(progress);
-              },
-              onReceivedServerTrustAuthRequest: (webController, challenge) async {
-                return ServerTrustAuthResponse(action: ServerTrustAuthResponseAction.PROCEED);
-              },
             ),
-            // Shimmer loading removed as requested
+            if (controller.isLoading.value)
+              const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.blue,
+                ),
+              ),
+            if (controller.isLoading.value)
+               Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: LinearProgressIndicator(
+                  value: controller.progress.value,
+                  backgroundColor: Colors.transparent,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                ),
+              ),
           ],
         );
       }),
@@ -88,7 +58,7 @@ class WebViewScreen extends StatelessWidget {
           const SizedBox(height: 20),
           const Text(
             "No Connection",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(height: 10),
           const Text(
@@ -99,6 +69,8 @@ class WebViewScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () => controller.reload(),
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
