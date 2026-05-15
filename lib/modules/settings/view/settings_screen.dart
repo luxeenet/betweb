@@ -34,8 +34,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _toggleBiometrics(bool value) async {
     if (value) {
       final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-      final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
-      
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+
       if (canAuthenticate) {
         try {
           final bool didAuthenticate = await auth.authenticate(
@@ -45,25 +46,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
           );
           if (didAuthenticate) {
             setState(() => _biometricsEnabled = true);
-            Get.snackbar("Success", "Biometric login enabled", 
+            Get.snackbar(
+              "Success",
+              "Biometric login enabled",
               snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.green.withValues(alpha: 0.8),
-              colorText: Colors.white);
+              colorText: Colors.white,
+            );
           }
         } on LocalAuthException catch (e) {
-          Get.snackbar("Authentication Error", e.description ?? "Failed to authenticate",
+          Get.snackbar(
+            "Authentication Error",
+            e.description ?? "Failed to authenticate",
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.red.withValues(alpha: 0.8),
-            colorText: Colors.white);
+            colorText: Colors.white,
+          );
         } catch (e) {
-          Get.snackbar("Error", "Biometric authentication failed",
+          Get.snackbar(
+            "Error",
+            "Biometric authentication failed",
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.red.withValues(alpha: 0.8),
-            colorText: Colors.white);
+            colorText: Colors.white,
+          );
         }
       } else {
-        Get.snackbar("Not Supported", "Biometrics not available on this device",
-          snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar(
+          "Not Supported",
+          "Biometrics not available on this device",
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } else {
       setState(() => _biometricsEnabled = false);
@@ -73,9 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Settings"),
-      ),
+      appBar: AppBar(title: const Text("Settings")),
       body: ListView(
         children: [
           const SizedBox(height: 20),
@@ -103,7 +114,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingItem(
             icon: Icons.info_outline_rounded,
             title: "Version",
-            trailing: Text(_version, style: const TextStyle(color: Colors.grey)),
+            trailing: Text(
+              _version,
+              style: const TextStyle(color: Colors.grey),
+            ),
             onTap: () {},
           ),
           _buildSettingItem(
@@ -140,9 +154,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Note: In a real app, you'd access the InAppWebViewController
                   // For now, we show a success message as a native feature demonstration
                   await InAppWebViewController.clearAllCache();
-                  Get.snackbar("Success", "Cache cleared successfully",
-                    snackPosition: SnackPosition.BOTTOM);
-                }
+                  Get.snackbar(
+                    "Success",
+                    "Cache cleared successfully",
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                },
               );
             },
           ),
@@ -188,7 +205,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return ListTile(
       leading: Icon(icon, color: Colors.blue),
       title: Text(title, style: const TextStyle(fontSize: 16)),
-      trailing: trailing ?? const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+      trailing:
+          trailing ??
+          const Icon(Icons.chevron_right_rounded, color: Colors.grey),
       onTap: onTap,
     );
   }
