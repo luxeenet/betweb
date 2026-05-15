@@ -30,7 +30,7 @@ class WebViewScreen extends StatelessWidget {
                 allowsInlineMediaPlayback: true,
                 useShouldOverrideUrlLoading: true,
                 isFraudulentWebsiteWarningEnabled: false,
-                safeBrowsingEnabled: true,
+                safeBrowsingEnabled: false,
                 supportZoom: false,
                 displayZoomControls: false,
                 builtInZoomControls: false,
@@ -41,7 +41,8 @@ class WebViewScreen extends StatelessWidget {
                 cacheEnabled: true,
                 allowFileAccessFromFileURLs: true,
                 allowUniversalAccessFromFileURLs: true,
-                allowsBackForwardNavigationGestures: true, // Native iOS back/forward
+                allowsBackForwardNavigationGestures: true,
+                transparentBackground: true,
               ),
               onWebViewCreated: (webController) {
                 controller.webViewController = webController;
@@ -54,12 +55,21 @@ class WebViewScreen extends StatelessWidget {
               },
               onReceivedError: (webController, request, error) {
                 controller.onReceivedError();
+                Get.snackbar("Network Error", error.description, 
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red.withValues(alpha: 0.7),
+                  colorText: Colors.white);
               },
               onReceivedHttpError: (webController, request, response) {
                 controller.onReceivedError();
+                Get.snackbar("Server Error", "HTTP ${response.statusCode}", 
+                  snackPosition: SnackPosition.BOTTOM);
               },
               onProgressChanged: (webController, progress) {
                 controller.onProgressChanged(progress);
+              },
+              onReceivedServerTrustAuthRequest: (webController, challenge) async {
+                return ServerTrustAuthResponse(action: ServerTrustAuthResponseAction.PROCEED);
               },
             ),
             // Shimmer loading removed as requested
