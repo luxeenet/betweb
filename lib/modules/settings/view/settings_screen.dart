@@ -14,7 +14,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _version = "1.0.5+7";
+  String _version = "1.0.6+8";
   bool _biometricsEnabled = AppConfig.enableBiometrics;
   final LocalAuthentication auth = LocalAuthentication();
 
