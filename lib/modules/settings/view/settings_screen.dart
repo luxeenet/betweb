@@ -15,7 +15,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _version = "1.0.8+10";
+  String _version = "1.0.9+11";
   bool _biometricsEnabled = AppConfig.enableBiometrics;
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -51,8 +51,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               "Success",
               "Biometric login enabled",
               snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green.withValues(alpha: 0.8),
+              backgroundColor: const Color(0xFF161616),
               colorText: Colors.white,
+              borderColor: const Color(0xFFFF7B2E),
+              borderWidth: 1,
+              margin: const EdgeInsets.all(16),
             );
           }
         } on LocalAuthException catch (e) {
@@ -60,16 +63,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             "Authentication Error",
             e.description ?? "Failed to authenticate",
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red.withValues(alpha: 0.8),
+            backgroundColor: const Color(0xFF161616),
             colorText: Colors.white,
+            borderColor: Colors.redAccent,
+            borderWidth: 1,
+            margin: const EdgeInsets.all(16),
           );
         } catch (e) {
           Get.snackbar(
             "Error",
             "Biometric authentication failed",
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red.withValues(alpha: 0.8),
+            backgroundColor: const Color(0xFF161616),
             colorText: Colors.white,
+            borderColor: Colors.redAccent,
+            borderWidth: 1,
+            margin: const EdgeInsets.all(16),
           );
         }
       } else {
@@ -77,6 +86,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           "Not Supported",
           "Biometrics not available on this device",
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF161616),
+          colorText: Colors.white,
+          borderColor: Colors.grey,
+          borderWidth: 1,
+          margin: const EdgeInsets.all(16),
         );
       }
     } else {
@@ -87,8 +101,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      backgroundColor: Colors.black, // Sleek premium dark theme background
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: const Text(
+          "Settings",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: Colors.white.withValues(alpha: 0.08),
+            height: 0.5,
+          ),
+        ),
+      ),
       body: ListView(
+        physics: const BouncingScrollPhysics(),
         children: [
           const SizedBox(height: 20),
           _buildSectionHeader("Preferences"),
@@ -98,7 +132,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Switch(
               value: AppConfig.enablePushNotifications,
               onChanged: (val) {},
-              activeColor: Colors.blue,
+              activeColor: const Color(0xFFFF7B2E),
+              activeTrackColor: const Color(0xFFFF7B2E).withValues(alpha: 0.3),
+              inactiveThumbColor: Colors.grey[400],
+              inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
             ),
           ),
           _buildSettingItem(
@@ -107,17 +144,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Switch(
               value: _biometricsEnabled,
               onChanged: (val) => _toggleBiometrics(val),
-              activeColor: Colors.blue,
+              activeColor: const Color(0xFFFF7B2E),
+              activeTrackColor: const Color(0xFFFF7B2E).withValues(alpha: 0.3),
+              inactiveThumbColor: Colors.grey[400],
+              inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
             ),
           ),
-          const Divider(indent: 20, endIndent: 20),
-          _buildSectionHeader("App info"),
+          const SizedBox(height: 15),
+          _buildSectionHeader("App Info"),
           _buildSettingItem(
             icon: Icons.info_outline_rounded,
             title: "Version",
             trailing: Text(
               _version,
-              style: const TextStyle(color: Colors.grey),
+              style: TextStyle(
+                color: Colors.grey[400],
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
             ),
             onTap: () {},
           ),
@@ -133,7 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: "Rate Us",
             onTap: () {},
           ),
-          const Divider(indent: 20, endIndent: 20),
+          const SizedBox(height: 15),
           _buildSectionHeader("Support"),
           _buildSettingItem(
             icon: Icons.help_outline_rounded,
@@ -146,10 +190,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () {
               Get.defaultDialog(
                 title: "Clear Cache",
+                titleStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
                 middleText: "This will clear all saved web data. Continue?",
+                middleTextStyle: TextStyle(
+                  color: Colors.grey[300],
+                  fontSize: 14,
+                ),
+                backgroundColor: const Color(0xFF161616),
                 textConfirm: "Clear",
                 textCancel: "Cancel",
                 confirmTextColor: Colors.white,
+                cancelTextColor: const Color(0xFFFF7B2E),
+                buttonColor: const Color(0xFFFF7B2E),
+                radius: 20,
                 onConfirm: () async {
                   Get.back();
                   // Clear cookies globally using webview_flutter
@@ -165,6 +222,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     "Success",
                     "Cache cleared successfully",
                     snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: const Color(0xFF161616),
+                    colorText: Colors.white,
+                    borderColor: const Color(0xFFFF7B2E),
+                    borderWidth: 1,
+                    margin: const EdgeInsets.all(16),
                   );
                 },
               );
@@ -179,7 +241,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Center(
             child: Text(
               "© 2026 ${AppConfig.appName}",
-              style: TextStyle(color: Colors.grey[500], fontSize: 12),
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const SizedBox(height: 100), // Space for bottom bar
@@ -194,10 +260,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Text(
         title.toUpperCase(),
         style: const TextStyle(
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: Colors.grey,
-          letterSpacing: 1.2,
+          color: Color(0xFFFF7B2E), // Brand orange
+          letterSpacing: 1.5,
         ),
       ),
     );
@@ -209,13 +275,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Widget? trailing,
     VoidCallback? onTap,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue),
-      title: Text(title, style: const TextStyle(fontSize: 16)),
-      trailing:
-          trailing ??
-          const Icon(Icons.chevron_right_rounded, color: Colors.grey),
-      onTap: onTap,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.05),
+          width: 0.8,
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFF7B2E).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFFFF7B2E),
+            size: 20,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: trailing ??
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.grey[600],
+              size: 22,
+            ),
+        onTap: onTap,
+      ),
     );
   }
 }

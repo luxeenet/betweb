@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
 import '../controller/webview_controller.dart';
+import '../../main/controller/main_controller.dart';
 
 class WebViewScreen extends StatelessWidget {
   final CustomWebViewController controller = Get.put(CustomWebViewController());
@@ -10,42 +11,54 @@ class WebViewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MainController mainController = Get.find<MainController>();
+
     return Scaffold(
       backgroundColor: Colors.black, // Match professional theme
-      body: Obx(() {
-        if (controller.isOffline.value) {
-          return _buildOfflineView();
-        }
-        return Stack(
-          children: [
-            RefreshIndicator(
-              onRefresh: () async {
-                controller.reload();
-              },
-              child: WebViewWidget(
-                controller: controller.webViewController,
-              ),
-            ),
-            if (controller.isLoading.value)
-              const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.blue,
+      body: SafeArea(
+        bottom: false,
+        child: Obx(() {
+          if (controller.isOffline.value) {
+            return _buildOfflineView();
+          }
+
+          final bool showBottomBar = mainController.isBottomBarVisible.value;
+          final double bottomPadding = showBottomBar ? (65.0 + MediaQuery.paddingOf(context).bottom) : 0.0;
+
+          return Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: bottomPadding),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    controller.reload();
+                  },
+                  child: WebViewWidget(
+                    controller: controller.webViewController,
+                  ),
                 ),
               ),
-            if (controller.isLoading.value)
-               Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: LinearProgressIndicator(
-                  value: controller.progress.value,
-                  backgroundColor: Colors.transparent,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+              if (controller.isLoading.value)
+                const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFFF7B2E), // Brand orange color
+                  ),
                 ),
-              ),
-          ],
-        );
-      }),
+              if (controller.isLoading.value)
+                 Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: LinearProgressIndicator(
+                    value: controller.progress.value,
+                    backgroundColor: Colors.transparent,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF7B2E)),
+                  ),
+                ),
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -69,7 +82,7 @@ class WebViewScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () => controller.reload(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: const Color(0xFFFF7B2E),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               shape: RoundedRectangleBorder(
