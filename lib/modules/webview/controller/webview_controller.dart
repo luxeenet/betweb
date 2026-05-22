@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../core/constants/app_config.dart';
+import '../../main/controller/main_controller.dart';
 
 class CustomWebViewController extends GetxController {
   late final WebViewController webViewController;
@@ -71,6 +73,12 @@ class CustomWebViewController extends GetxController {
             return NavigationDecision.navigate;
           },
         ),
+      )
+      ..addJavaScriptChannel(
+        'FlutterNavigation',
+        onMessageReceived: (JavaScriptMessage message) {
+          _handleNativeMessage(message.message);
+        },
       )
       ..setUserAgent(AppConfig.userAgent)
       ..loadRequest(Uri.parse(AppConfig.baseUrl));
@@ -138,5 +146,31 @@ class CustomWebViewController extends GetxController {
     progress.value = 0.0;
     isLoading.value = true;
     webViewController.reload();
+  }
+
+  void _handleNativeMessage(String messageStr) {
+    try {
+      final data = jsonDecode(messageStr) as Map<String, dynamic>;
+      final action = data['action'] as String?;
+      
+      if (action == 'pageChanged') {
+        final page = data['page'] as String?;
+        if (page != null) {
+          final mainController = Get.find<MainController>();
+          final expectedIndex = mainController.pageToIndex(page);
+          if (mainController.currentIndex.value != expectedIndex) {
+            mainController.currentIndex.value = expectedIndex;
+          }
+        }
+      } else if (action == 'toggleBottomBar') {
+        final hide = data['hide'] as bool?;
+        if (hide != null) {
+          final mainController = Get.find<MainController>();
+          mainController.setBottomBarVisibility(!hide);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error parsing native web message: $e");
+    }
   }
 }
