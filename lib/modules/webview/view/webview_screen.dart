@@ -23,7 +23,7 @@ class WebViewScreen extends StatelessWidget {
           }
 
           final bool showBottomBar = mainController.isBottomBarVisible.value;
-          final double bottomPadding = showBottomBar ? (65.0 + MediaQuery.paddingOf(context).bottom) : 0.0;
+          final double bottomPadding = showBottomBar ? MediaQuery.paddingOf(context).bottom : 0.0;
 
           return Stack(
             children: [

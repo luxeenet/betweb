@@ -4,8 +4,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_config.dart';
 import '../../webview/controller/webview_controller.dart';
+import '../../main/controller/main_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _version = "1.0.9+11";
+  String _version = "1.1.0+12";
   bool _biometricsEnabled = AppConfig.enableBiometrics;
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -30,6 +32,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _version = "${info.version}+${info.buildNumber}";
     });
+  }
+
+  Future<void> _launchUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        throw Exception("Could not launch $urlString");
+      }
+    } catch (_) {
+      Get.snackbar(
+        "Link Error",
+        "Could not open this page inside a browser.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF161616),
+        colorText: Colors.white,
+        borderColor: Colors.redAccent,
+        borderWidth: 1,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   Future<void> _toggleBiometrics(bool value) async {
@@ -105,6 +127,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          onPressed: () {
+            final MainController mainController = Get.find<MainController>();
+            mainController.changePage(0); // Switch tab back to Home Page
+          },
+        ),
         title: const Text(
           "Settings",
           style: TextStyle(
@@ -175,14 +204,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingItem(
             icon: Icons.star_border_rounded,
             title: "Rate Us",
-            onTap: () {},
+            onTap: () {
+              Get.snackbar(
+                "Feedback Received",
+                "Thank you for rating BetMakini app!",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: const Color(0xFF161616),
+                colorText: Colors.white,
+                borderColor: const Color(0xFFFF7B2E),
+                borderWidth: 1,
+                margin: const EdgeInsets.all(16),
+              );
+            },
           ),
           const SizedBox(height: 15),
           _buildSectionHeader("Support"),
           _buildSettingItem(
             icon: Icons.help_outline_rounded,
             title: "Help & Support",
-            onTap: () {},
+            onTap: () => _launchUrl("https://valley100.carrd.co"),
           ),
           _buildSettingItem(
             icon: Icons.delete_outline_rounded,
@@ -235,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingItem(
             icon: Icons.privacy_tip_outlined,
             title: "Privacy Policy",
-            onTap: () {},
+            onTap: () => _launchUrl("https://betimakini.butax.co.tz"),
           ),
           const SizedBox(height: 40),
           Center(
